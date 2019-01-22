@@ -1,11 +1,15 @@
-import urllib.request
-import config.config as config
-import bs4
+from bs4 import BeautifulSoup
+from urllib import request
+from urllib import parse
+import config.config as conf
 
-response = urllib.request.urlopen(config.TARGET_CONFIG['tencent'])
-html = response.read().decode('utf-8')
-soup = bs4.BeautifulSoup(html, features="html.parser")
-result = soup.select('a[href]')
 
-for item in result:
-    print(item)
+def get_soup_object(url, domain_core):
+    response = request.urlopen(url)
+    html_content = response.read().decode('utf-8')
+    soup_object = BeautifulSoup(html_content, features="html.parser")
+    for item in soup_object.find_all('a'):
+        ref = item.get('href')
+        abs_ref = parse.urljoin(url, ref)
+        if domain_core in abs_ref:
+            print(abs_ref)

@@ -1,2 +1,4 @@
+pymongo
+requests
 beautifulsoup4==4.7.1
 soupsieve==1.7.2
