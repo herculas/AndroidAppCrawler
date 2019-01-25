@@ -1,16 +1,30 @@
+import time
 from bs4 import BeautifulSoup
 from urllib import request
 from urllib import parse
+
 import config.config as conf
-from repository.database import database_settings
-import pprint
+from utils.tencent import get_application_info
+
+url_queue = []
+visited_url = set()
 
 
 def get_soup_object(url, domain_core):
-    response = request.urlopen(url)
+    """
+    get the beautiful soup object corresponding to the given url
+    :param url: the specific url which to be resolved
+    :param domain_core: the core oof the domain which is used to determine if this page is inter-domain page
+    :return: if exception occurs return NoneType else return the beautiful soup object
+    """
+
+    print('read url: ', url)
+    try:
+        response = request.urlopen(url)
+    except:
+        return
     html_content = response.read().decode('utf-8')
     soup_object = BeautifulSoup(html_content, features="html.parser")
-
     # get all the links
     for item in soup_object.find_all('a'):
         ref = item.get('href')
@@ -18,30 +32,32 @@ def get_soup_object(url, domain_core):
 
         # determine if this is an inter-domain link
         if domain_core in abs_ref:
-            print(abs_ref)
+            if abs_ref not in visited_url:
+                url_queue.append(abs_ref)
+    return soup_object
 
 
-def get_application_info(soup_object, collection_name):
-    name_tag = soup_object.find(class_='det-name-int')
-    size_tag = soup_object.find(class_='det-size')
-    download_tag = soup_object.find(class_='det-down-btn')
-    version_tag = soup_object.find(class_='det-othinfo-data')
-    publish_tag = soup_object.find(id='J_ApkPublishTime')
-
-    collection = database_settings(collection_name)
-    app_info = {'app_name': name_tag.string,
-                'app_size': size_tag.string,
-                'apk_name': download_tag.get('apk'),
-                'apk_url': download_tag.get('data-apkurl'),
-                'apk_version': version_tag.string,
-                'apk_publish_time': publish_tag.get('data-apkpublishtime')
-                }
-
-    if collection.count_documents({'apk_name': download_tag.get('apk')}) == 0:
-        collection.insert_one(app_info)
+def crawler(domain):
+    """
+    the main driver of the crawler which control the loop of crawling
+    :param domain: the domain selector which is used to specify the target market site
+    """
+    domain_object = conf.TARGET[domain]
+    base_url = domain_object['url']
+    base_core = domain_object['core']
+    url_queue.append(base_url)
+    while url_queue:
+        this_url = url_queue.pop()
+        if this_url not in visited_url:
+            soup = get_soup_object(this_url, base_core)
+            visited_url.add(this_url)
+            get_application_info(soup)
+            time.sleep(3)
 
 
-response = request.urlopen('https://android.myapp.com/myapp/detail.htm?apkName=ctrip.android.view')
-html_content = response.read().decode('utf-8')
-soup_object = BeautifulSoup(html_content, features="html.parser")
-get_application_info(soup_object, 'tencent')
+def main():
+    crawler('tencent')
+
+
+if __name__ == '__main__':
+    main()

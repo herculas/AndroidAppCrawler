@@ -1,3 +1,4 @@
+# the basic settings about the host
 BASE = {
     'host': 'localhost',
     'port': 1121,
@@ -8,15 +9,17 @@ BASE = {
     }
 }
 
+# the settings about MongoDB database
 DATABASE = {
     'host': 'localhost',
     'port': 27017,
     'database': 'AppCrawler'
 }
 
+# the settings about the target market sites
 TARGET = {
     'tencent': {
         'url': 'https://sj.qq.com/myapp/',
-        'domain_core': 'sj.qq.com/myapp'
+        'core': 'sj.qq.com/myapp'
     }
 }
