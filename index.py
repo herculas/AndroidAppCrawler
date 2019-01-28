@@ -1,10 +1,10 @@
+import importlib
 import time
 from bs4 import BeautifulSoup
 from urllib import request
 from urllib import parse
-
 import config.config as conf
-from utils.tencent import get_application_info
+
 
 url_queue = []
 visited_url = set()
@@ -51,6 +51,7 @@ def crawler(domain):
         if this_url not in visited_url:
             soup = get_soup_object(this_url, base_core)
             visited_url.add(this_url)
+            get_application_info = importlib.import_module('utils.' + domain).get_application_info
             get_application_info(soup)
             time.sleep(3)
 
