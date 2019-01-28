@@ -1,5 +1,6 @@
 import importlib
 import time
+import sys
 from bs4 import BeautifulSoup
 from urllib import request
 from urllib import parse
@@ -57,7 +58,10 @@ def crawler(domain):
 
 
 def main():
-    crawler('tencent')
+    if len(sys.argv) == 1:
+        crawler('tencent')
+    else:
+        crawler(sys.argv[1])
 
 
 if __name__ == '__main__':
