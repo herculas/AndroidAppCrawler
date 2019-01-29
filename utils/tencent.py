@@ -4,8 +4,7 @@ from repository.database import database_settings
 
 def get_application_info(soup_object):
     """
-    information filter customized
-    for Tencent Application Market
+    information filter customized for Tencent Application Market
 
     :param soup_object: a HTML page element object resolved by beautiful soup
     :return: if not information page return NoneType else do not return anything

@@ -14,6 +14,7 @@ visited_url = set()
 def get_soup_object(url, domain_core):
     """
     get the beautiful soup object corresponding to the given url
+
     :param url: the specific url which to be resolved
     :param domain_core: the core oof the domain which is used to determine if this page is inter-domain page
     :return: if exception occurs return NoneType else return the beautiful soup object
@@ -26,6 +27,7 @@ def get_soup_object(url, domain_core):
         return
     html_content = response.read().decode('utf-8')
     soup_object = BeautifulSoup(html_content, features="html.parser")
+
     # get all the links
     for item in soup_object.find_all('a'):
         ref = item.get('href')
@@ -41,6 +43,7 @@ def get_soup_object(url, domain_core):
 def crawler(domain):
     """
     the main driver of the crawler which control the loop of crawling
+
     :param domain: the domain selector which is used to specify the target market site
     """
     domain_object = conf.TARGET[domain]

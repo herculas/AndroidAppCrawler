@@ -21,5 +21,9 @@ TARGET = {
     'tencent': {
         'url': 'https://sj.qq.com/myapp/',
         'core': 'sj.qq.com/myapp'
+    },
+    '360': {
+        'url': 'http://zhushou.360.cn/',
+        'core': 'zhushou.360.cn'
     }
 }
