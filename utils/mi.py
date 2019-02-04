@@ -1,29 +1,27 @@
+from urllib import parse
 import time
+
 from repository.database import database_settings
 
 
 def get_application_info(soup_object):
     """
-    information filter customized for 360 Application Market
+    information filter customized for Mi Application Market
 
     :param soup_object: a HTML page element object resolved by beautiful soup
     :return: if not information page return NoneType else do not return anything
-
-    360 SUCKS!
-    The HTML of their page SUCKS!
-    360 frontend programmer SUCKS!
     """
 
     if soup_object is None:
         return
 
-    name = soup_object.find(id='app-name').contents[0].string
-    size = soup_object.find(class_='pf').contents[7].string
-    download_info_href = soup_object.find(class_='js-downLog').get('href')
-    download_info = download_info_href[download_info_href.find('&url') + 5:]
-    apk_official_name = download_info[download_info.rfind('/') + 1: download_info.rfind('_')]
-    version = soup_object.find(class_='base-info').find('table').contents[1].contents[3].contents[1].contents[1]
-    publish_time = soup_object.find(class_='base-info').find('table').contents[1].contents[1].contents[3].contents[1]
+    name = soup_object.find(class_='intro-titles').contents[1].string
+    size = soup_object.find(class_='details').contents[0].contents[1].string
+    download_info_relative = soup_object.find(class_='app-info-down').contents[0].get('href')
+    download_info = parse.urljoin('http://app.mi.com', download_info_relative)
+    apk_official_name = soup_object.find(class_='details').contents[0].contents[7].string
+    version = soup_object.find(class_='details').contents[0].contents[3].string
+    publish_time = soup_object.find(class_='details').contents[0].contents[5].string
 
     if name is None or \
        size is None or \
@@ -33,7 +31,8 @@ def get_application_info(soup_object):
        publish_time is None:
         return
 
-    collection = database_settings('360')
+    collection = database_settings('mi')
+
     app_info = {
         'app_name': name,
         'app_size': size,
@@ -45,5 +44,6 @@ def get_application_info(soup_object):
     }
 
     print(app_info)
+
     if collection.count_documents({'apk_name': apk_official_name}) == 0:
         collection.insert_one(app_info)
