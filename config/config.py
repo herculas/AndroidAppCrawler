@@ -25,5 +25,9 @@ TARGET = {
     '360': {
         'url': 'http://zhushou.360.cn/',
         'core': 'zhushou.360.cn'
+    },
+    'mi': {
+        'url': 'http://app.mi.com/',
+        'core': 'app.mi.com'
     }
 }

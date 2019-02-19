@@ -43,7 +43,5 @@ def get_application_info(soup_object):
         'insert_time': time.time()
     }
 
-    print(app_info)
-
     if collection.count_documents({'apk_name': apk_official_name}) == 0:
         collection.insert_one(app_info)
